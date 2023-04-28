@@ -1,0 +1,273 @@
+---
+title: "Assignment two markdown"
+output:
+  html_document: default
+  word_document: default
+---
+
+## Packages used include;
+- readxl
+- tidyverse
+- ggplot2
+- ggpubr
+- dplyr
+
+```{r, echo= FALSE}
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+
+```
+# Importing data
+
+```{r, include = FALSE}
+work <- read_excel(("D:/R/Assignment2/Assignment2_dataset.xlsx"))
+View(work)
+```
+# **Question 1**
+### removing the missing values
+
+```{r}
+work <- na.omit(work)
+
+```
+
+# **Question 2**
+
+### Show the relationship between the prices and perception change.
+
+### Approach
+- define the perception values.
+- compute the percentage of each perception in response to price.
+
+```{r, echo =  FALSE}
+postive  <- ((length(c(work$P[work$P == "Positive"]))/length(c(work$P))))*100
+negative <- ((length(c(work$P[work$P == "Negative"]))/length(c(work$P))))*100
+partial_postive <- ((length(c(work$P[work$P == "SP"]))/length(c(work$P))))*100
+partial_negative <- ((length(c(work$P[work$P == "SN"]))/length(c(work$P))))*100
+Nuetral <- ((length(c(work$P[work$P == "NR"]))/length(c(work$P))))*100
+```
+
+## Results as percentages of all perceptions.
+
+```{r}
+postive 
+negative
+partial_postive
+partial_negative
+Nuetral
+```
+
+## Displaying the covariation between the perception and price
+
+```{r}
+ggplot(data = work, mapping = aes(x = price)) +
+  geom_freqpoly(mapping = aes(color = P), binwidth = 500)
+```
+
+# **Question 3**
+
+## Compare the perception change and diamond quality
+
+```{r, echo=FALSE}
+PC <- work$PC
+cut <- work$cut
+ggplot(data = work) +
+  geom_count(mapping = aes(x = cut, y = PC))
+```
+
+# **Question 4**
+## Generating a boxplot of all the variables
+    
+```{r, echo=FALSE}  
+boxplot(work$price, work$carat, work$depth, work$x, work$y, names=c("price", "carat", "depth", "x", "y"), horizontal=TRUE, col="green", main="Boxplot of the variables of the dataset", xlab="Values", ylab="Variables")
+```
+
+# **Question 5**
+## Generating induvidual boxplots of the variables
+
+```{r, echo=FALSE}
+boxplot(work$price, main="Boxplot of the price variable",col="green")
+boxplot(work$carat, main="Boxplot of the carat variable",col="green")
+boxplot(work$depth, main="Boxplot of the depth variable",col="green")
+boxplot(work$x, main="Boxplot of the x variable",col="green")
+boxplot(work$y, main="Boxplot of the y variable",col="green")
+```
+
+## A box plot that labels out the outliers
+### Using the interquartile range to identify the outliers
+
+### Approach
+- Compute the interquartile range.
+- Compute the upper and lower limits.
+- Identify the outliers.
+
+```{r,include=FALSE}
+IQRprices <- IQR(work$price)
+IQRprices
+
+#For price.
+quartileprice <- quantile(work$price, probs=c(.25, .75), na.rm = FALSE)
+quartileprice
+#calculate the upper and lower limits
+pricelower <- quartileprice[1] - 1.5*IQRprices
+priceupper <- quartileprice[2] + 1.5*IQRprices
+pricelower
+priceupper
+#filter out the outliers for price
+price_no_outliers <- subset(work, work$price > priceupper | work$price < pricelower)
+price_no_outliers
+
+## save the new dataframe with no outliers
+new_work <- work[work$price < priceupper & work$price > pricelower,]
+
+#For price/carat (x).
+IQRx <- IQR(work$x)
+IQRx
+quartile_x <- quantile(work$x, probs=c(.25, .75), na.rm = FALSE)
+quartile_x
+#calculate the upper and lower limits
+xlower <- quartileprice[1] - 1.5*IQRprices
+xupper <- quartileprice[2] + 1.5*IQRprices
+xlower
+xupper
+#filter out the outliers for x
+x_no_outliers <- subset(work, work$x > xupper | work$x < xlower)
+x_no_outliers
+work_x <- work[work$x < priceupper & work$x > pricelower,]
+
+IQRy <- IQR(work$y)
+IQRy
+#calculate the quartiles
+quartilesy <- quantile(work$y, probs=c(.25, .75), na.rm = FALSE)
+quartilesy
+#calculate the upper and lower limits
+Lowery <- quartilesy[1] - 1.5*IQRy
+Uppery <- quartilesy[2] + 1.5*IQRy
+Lowery
+Uppery
+#filter the outliers
+no_outliersy <- subset(work, work$y > Uppery | work$y < Lowery)
+no_outliersy
+#box plot of the data without outliers
+
+new_work <- work[work$y < Uppery & work$y > Lowery,]
+
+```
+
+# Plots without outliers
+
+```{r,echo=FALSE}
+boxplot(price_no_outliers$price, main="Boxplot of the price variable",col="blue")
+boxplot(x_no_outliers$x , main="Boxplot of the x variable",col="blue")
+boxplot(no_outliersy$y, main="Boxplot of the y variable",col="blue")
+```
+
+# **Question 6**
+## creating a new csv file with the outliers removed
+
+```{r}
+write.csv(new_work, file="D:/R/Assignment2_MugangaCharles.csv")
+
+```
+
+# **Question 7**
+## Display the relationship between one qualitative variable and one finite variable in the dataset
+- the selected variables are cut and price.
+
+```{r,echo=FALSE}
+ggplot(new_work, aes(x=cut, y=price)) + geom_bar(stat="identity", fill="brown") + labs(title="Relationship between the cut and the price", x="Cut", y="Price")
+
+```
+
+# **Question 8**
+
+## Compute the variance between three groups; diamond carat, perception change and price
+
+### Approach
+- Comparing mean, median and mode
+- Calculating the mean and median of the variable "carat" in the diamonds dataset
+```{r, echo=FALSE}
+
+mean(new_work$carat,  na.rm = TRUE)
+median(new_work$carat,  na.rm = TRUE)
+
+```
+## results 
+- Mean =0.72, Median = 0.7.
+- The performance of carat is positively skewed.
+
+# **Question 9**
+### Approach
+- Compute the variance between three groups; diamond carat, perception change and price
+
+- the groups are carat, price and perception change
+- the variables are carat, PC and price
+- The null hypothesis is that the groups have the same variance
+- The alternative hypothesis is that the groups have different variances
+
+#### Steps
+- view the groups
+```{r,echo=FALSE}
+groups <- new_work[,c("carat", "PC", "price")] 
+groups
+```
+- Generate the random sample of the data.
+```{r,include=FALSE}
+#generate ramdom sample of the data
+sample <- sample_n(groups, 100)
+sample
+#the factors are the groups
+#show the levels
+#use factor function to define the groups
+x <- factor(sample$PC)
+x
+levels(x)
+#show the summary of the data by the groups
+x <- ordered(x, levels=c("Negative","Positive","Positve","NR","SN","SP"))# the order of the levels
+group_by(groups, PC) %>% 
+  summarise(
+    mean=mean(price), 
+    sd=sd(price), n=n())
+```
+
+# Plots
+
+```{r, echo=FALSE}
+ggline(groups, x = "PC", y = "price", 
+        add = c("mean_se"),
+        order = c("Negative","Positive","Positve","NR","SN","SP"),
+        ylab = "Price", xlab="Perception Change", 
+        title = "Line plot of the groups")
+
+ggline(groups, x = "PC", y = "carat", 
+        add = c("mean_se"),
+        order = c("Negative","Positive","Positve","NR","SN","SP"),
+        ylab = "Carat", xlab="Perception Change", 
+        title = "Line plot of the groups")
+```
+
+## Computng the variance betwen the groups
+    
+```{r, echo=FALSE}
+anova <- aov(price ~ PC, data = groups)
+summary(anova)
+```
+
+## Commenting on the results
+- The p-value is 0.954 which is greater than 0.05 and therefore we fail to reject the null hypothesis therefore statistically not significant
+- The posthoc test used is the Tukey HSD test
+- The null hypothesis is that the groups have the same variance
+- The alternative hypothesis is that the groups have different variances by aleast one group having a variance not equal to the others groups
+
+# **Question 9(b)**
+
+```{r}
+TukeyHSD(anova, conf.level = .95)
+plot(TukeyHSD(anova, conf.level = .95))
+```
+
+- The Tukey HSD test shows that the groups have different variances by aleast one group having a variance not equal to the others groups.

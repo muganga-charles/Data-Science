@@ -1,0 +1,227 @@
+
+---
+title: 'Assignment 1 markdown '
+output:
+  html_document: default
+  word_document: default
+---
+### libraries used
+- tidyverse
+- ggplot2
+- readxl
+
+
+```{r,echo = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+library(ggpubr)
+
+```
+
+### **Part a** <br />Appoach
+ - Load the dataset
+ - Summarize dataset
+ - calculate the mode of the overall performance
+ - Calculate the mode using the user function.
+ - print the mode
+```{r, echo = FALSE}
+coffe_dataset <- read_excel("D:/R/R/Group Assignment 1_Cup sensory results-CWDr lines.xlsx")
+summary(coffe_dataset)
+```
+#### Mode
+```{r, echo = FALSE}
+getmode <- function(vector) {
+  uniquevector <- unique(vector)
+  uniquevector[which.max(tabulate(match(vector, uniquevector)))]
+} 
+ 
+vector <- c(coffe_dataset$OVERALL)
+Mode_Overall <- getmode(vector)
+print(Mode_Overall)
+
+```
+
+# breaking mean and median
+```{r,echo = FALSE}
+Ibanda <- coffe_dataset[coffe_dataset$ORIGIN == "Ibanda",]
+#View(Ibanda)
+
+Mityana <- coffe_dataset[coffe_dataset$ORIGIN == "Mityana",]
+#View(Mityana)
+
+Mukono <- coffe_dataset[coffe_dataset$ORIGIN == "Mukono",]
+#View(Mukono)
+```
+
+### results
+- Ibanda, Mityana and MUkono respectively.
+```{r}
+
+summary(Ibanda$OVERALL)
+summary(Mityana$OVERALL)
+summary(Mukono$OVERALL)
+
+``` 
+## The graphs
+```{r, echo = FALSE}
+hist(Ibanda$OVERALL, main = "Ibanda overall variety performance", xlab = "Overall performance", ylab = NULL)
+hist(Mityana$OVERALL, main = "Mityana overall variety performance", xlab = "Overall performance", ylab = NULL)
+hist(Mukono$OVERALL, main = "Mukono overall variety performance", xlab = "Overall performance", ylab = NULL)
+``` 
+
+# **Part b**
+
+## Appoach
+ - relationship between the variables
+ - Looking at effect of flavor on performance per district
+ - Looking at effect of aroma on performance per district
+ - Looking at effect of aftertaste on performance per district
+ - Looking at effect of salt/acid on performance per district
+    
+```{r, echo = FALSE}
+
+ggplot(coffe_dataset, aes(x = coffe_dataset$"FLAVOR", y = coffe_dataset$"FLAVOR")) + 
+  geom_point() + labs(title = "Effect of flavor on overall coffee performance", x = "Overall performance", y = "Flavor")
+
+ggplot(Ibanda, aes(x = Ibanda$"FLAVOR", y = Ibanda$"FLAVOR")) + 
+  geom_point() + labs(title = "Effect of flavor on coffee performance in Ibanda", x = "Overall performance", y = "Flavor")
+
+ggplot(Mityana, aes(x = Mityana$"FLAVOR", y = Mityana$"FLAVOR")) + 
+  geom_point() + labs(title = "Effect of flavor on coffee performance in Mityana", x = "Overall performance", y = "Flavor")
+
+ggplot(Mukono, aes(x = Mukono$"FLAVOR", y = Mukono$"FLAVOR")) + 
+  geom_point() + labs(title = "Effect of flavor on coffee performance in Mukono", x = "Overall performance", y = "Flavor")
+
+ggplot(coffe_dataset, aes(x = coffe_dataset$"FRAGRANCE/AROMA", y = coffe_dataset$"FRAGRANCE/AROMA")) +
+    geom_point() + labs(title = "Effect of aroma on overall coffee performance", x = "Overall performance", y = "FRAGRANCE/AROMA")
+ggplot(Ibanda, aes(x = Ibanda$"FRAGRANCE/AROMA", y = Ibanda$"FRAGRANCE/AROMA")) +
+    geom_point() + labs(title = "Effect of aroma on coffee performance in Ibanda", x = "Overall performance", y = "FRAGRANCE/AROMA")
+ggplot(Mityana, aes(x = Mityana$"FRAGRANCE/AROMA", y = Mityana$"FRAGRANCE/AROMA")) +
+    geom_point() + labs(title = "Effect of aroma on coffee performance in Mityana", x = "Overall performance", y = "FRAGRANCE/AROMA")
+
+ggplot(Mukono, aes(x = Mukono$"FRAGRANCE/AROMA", y = Mukono$"FRAGRANCE/AROMA")) +
+    geom_point() + labs(title = "Effect of aroma on coffee performance in Mukono", x = "Overall performance", y = "FRAGRANCE/AROMA")
+
+ggplot(coffe_dataset, aes(x = coffe_dataset$"AFTERTASTE", y = coffe_dataset$"AFTERTASTE")) +
+    geom_point() + labs(title = "Effect of aftertaste on overall coffee performance", x = "Overall performance", y = "Aftertaste")
+ggplot(Ibanda, aes(x = Ibanda$"AFTERTASTE", y = Ibanda$"AFTERTASTE")) +
+    geom_point() + labs(title = "Effect of aftertaste on coffee performance in Ibanda", x = "Overall performance", y = "Aftertaste")
+ggplot(Mityana, aes(x = Mityana$"AFTERTASTE", y = Mityana$"AFTERTASTE")) +    
+    geom_point() + labs(title = "Effect of aftertaste on coffee performance in Mityana", x = "Overall performance", y = "Aftertaste")   
+
+ggplot(Mukono, aes(x = Mukono$"AFTERTASTE", y = Mukono$"AFTERTASTE")) +
+    geom_point() + labs(title = "Effect of aftertaste on coffee performance in Mukono", x = "Overall performance", y = "Aftertaste")
+
+ggplot(coffe_dataset, aes(x = coffe_dataset$"SALT/ ACID", y = coffe_dataset$"SALT/ ACID")) +  
+    geom_point() + labs(title = "Effect of acidity on overall coffee performance", x = "Overall performance", y = "SALT/ ACID")
+
+ggplot(Ibanda, aes(x = Ibanda$"SALT/ ACID", y = Ibanda$"SALT/ ACID")) +
+    geom_point() + labs(title = "Effect of acidity on coffee performance in Ibanda", x = "Overall performance", y = "SALT/ ACID")
+
+ggplot(Mityana, aes(x = Mityana$"SALT/ ACID", y = Mityana$"SALT/ ACID")) +
+    geom_point() + labs(title = "Effect of acidity on coffee performance in Mityana", x = "Overall performance", y = "SALT/ ACID")
+
+ggplot(Mukono, aes(x = Mukono$"SALT/ ACID", y = Mukono$"SALT/ ACID")) +
+    geom_point() + labs(title = "Effect of acidity on coffee performance in Mukono", x = "Overall performance", y = "SALT/ ACID")
+
+```
+    
+
+# **Part c(i)**
+
+
+# PERFORMANCE BY VARIETY AND DISTRICT
+#### concentrating on the mean of the overall performance
+```{r, echo = FALSE}
+Ibanda_mean <- mean(Ibanda$OVERALL)
+Mityana_mean <- mean(Mityana$OVERALL)
+Mukono_mean <- mean(Mukono$OVERALL)
+
+
+Districts <- c("Ibanda", "Mityana", "Mukono")
+Means <- c(Ibanda_mean, Mityana_mean, Mukono_mean)
+Districts_means <- data.frame(Districts,Means)
+
+ggplot(Districts_means, aes(x = Districts, y = Means)) + 
+  geom_bar(stat = "identity") + labs(title = "Mean overall performance by district", x = "Districts", y = "Mean overall performance")
+
+```
+
+# **Part c(ii)**
+
+#  Performance of each variety
+- Transform the coffe_dataset to subselected varieties individually
+- calculating the mean of each variety
+- Plot the means
+
+
+```{r, echo = FALSE}
+KR3 <- coffe_dataset[coffe_dataset$VARIETY == "KR3",]
+KR4 <- coffe_dataset[coffe_dataset$VARIETY == "KR4",]
+KR5 <- coffe_dataset[coffe_dataset$VARIETY == "KR5",]
+KR6 <- coffe_dataset[coffe_dataset$VARIETY == "KR6",]
+KR7 <- coffe_dataset[coffe_dataset$VARIETY == "KR7",]
+
+mean_KR3 <- mean(KR3$OVERALL)
+mean_KR4 <- mean(KR4$OVERALL)
+mean_KR5 <- mean(KR5$OVERALL)
+mean_KR6 <- mean(KR6$OVERALL)
+mean_KR7 <- mean(KR7$OVERALL)
+
+Varieties <- c("KR3", "KR4", "KR5", "KR6", "KR7")
+Variety_means <- c(mean_KR3,mean_KR4,mean_KR5,mean_KR6,mean_KR7)
+Varieties_means <- data.frame(Varieties, Variety_means)
+ggplot(Varieties_means, aes(Varieties, Variety_means, group=1)) +
+  geom_line() + geom_point() + labs (title = "Mean overall variety performance")
+```
+
+# **Part d** <br />The distibution central tendency of the overall performance
+### the distibution central tendency of each variable
+
+```{r, echo = FALSE}
+boxplot(coffe_dataset$OVERALL, main = "OVERALL PERFORMANCE OF VARIETIES", ylab = "overall scores")
+
+boxplot(coffe_dataset$"FRAGRANCE/AROMA", main = "FRAGRANCE/AROMA", xlab = "FRAGRANCE/AROMA")
+
+boxplot(coffe_dataset$FLAVOR, main = "FLAVOR", xlab = "FLAVOR")
+
+boxplot(coffe_dataset$"SALT/ ACID", main = "SALT/ACID", xlab = "SALT/ACID")
+
+boxplot(coffe_dataset$"BITTER/ SWEET", main = "BITTER/SWEET", xlab = "BITTER/SWEET")
+
+boxplot(coffe_dataset$AFTERTASTE, main = "AFTERTASTE", xlab = "AFTERTASTE")
+
+boxplot(coffe_dataset$"MOUTH FEEL", main = "MOUTH FEEL", xlab = "MOUTH FEEL")
+
+boxplot(coffe_dataset$OVERALL, main = "OVERALL", xlab = "OVERALL")
+
+```
+
+## **Part e** <br />normal distribution tests
+- Test the overall variable for normal distribution using the Shapiro-wilk test
+- Null hypothesis based on research question: The overall performance of varieties across - districts is normally distributed. p-value >= 0.05 
+- Alternative hypothesis: Overall performance is not normally distributed across districts. - p-value =<0.05 
+```{r, echo = FALSE}
+shapiro.test(coffe_dataset$OVERALL)
+```
+
+- p-value = 0.01189
+
+## visualize the distribution of the overall variable
+```{r, eval= FALSE}
+ggqqplot(coffe_dataset$OVERALL, ylab = "Overall scores",
+         ggtheme = theme_minimal())
+qqnorm(coffe_dataset$OVERALL)
+qqline(coffe_dataset$OVERALL, col = "steelblue", lwd = 2)
+
+```
+- the data is not normally distributed therefore we will use the non-parametric test
+- One-sample Wilcoxon signed-rank test
+```{r, echo = FALSE}
+data <- wilcox.test(coffe_dataset$OVERALL, mu = 0.8)
+data
+```
+
+
+
